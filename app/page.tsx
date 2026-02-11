@@ -10,6 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface Parameter {
   Value: any;
@@ -1119,9 +1121,13 @@ export default function NPCBuilder() {
             <CardTitle>JSON Preview</CardTitle>
           </CardHeader>
           <CardContent>
-            <pre className="bg-muted rounded-lg p-4 text-sm overflow-auto max-h-96">
+            <SyntaxHighlighter
+              language="json"
+              style={vscDarkPlus}
+              customStyle={{ borderRadius: '0.5rem', maxHeight: '24rem', margin: 0, fontSize: '0.875rem' }}
+            >
               {JSON.stringify(npc, null, 2)}
-            </pre>
+            </SyntaxHighlighter>
           </CardContent>
         </Card>
       </div>

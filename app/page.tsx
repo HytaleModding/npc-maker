@@ -508,12 +508,16 @@ export default function NPCBuilder() {
         try {
           const imported = JSON.parse(e.target?.result as string);
           setNPC(imported);
+          setParameterInputValues({});
+          setParameterRenameTimeouts({});
+          toast.success('JSON imported successfully!');
         } catch (error) {
-          alert('Invalid JSON file');
+          toast.error('Invalid JSON file');
         }
       };
       reader.readAsText(file);
     }
+    event.target.value = '';
   };
 
   const copyJSONToClipboard = async () => {

@@ -292,12 +292,10 @@ export default function NPCBuilder() {
   };
 
   const debouncedRenameParameter = useCallback((oldKey: string, newKey: string) => {
-    // Clear existing timeout for this parameter
     if (parameterRenameTimeouts[oldKey]) {
       clearTimeout(parameterRenameTimeouts[oldKey]);
     }
 
-    // Set new timeout
     const timeoutId = setTimeout(() => {
       renameParameter(oldKey, newKey);
       setParameterRenameTimeouts(prev => {
@@ -305,7 +303,7 @@ export default function NPCBuilder() {
         delete newTimeouts[oldKey];
         return newTimeouts;
       });
-    }, 500); // 500ms delay
+    }, 500);
 
     setParameterRenameTimeouts(prev => ({
       ...prev,
@@ -518,62 +516,65 @@ export default function NPCBuilder() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4 text-white">
-            NPC Builder
-          </h1>
-          <div className="flex gap-4">
-            <Button onClick={exportJSON} className="flex items-center gap-2">
-              <Download size={16} />
-              Export JSON
-            </Button>
-            <Button variant="secondary" className="flex items-center gap-2" asChild>
-              <label>
-                <Copy size={16} />
-                Import JSON
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={importJSON}
-                  className="hidden"
-                />
-              </label>
-            </Button>
-          </div>
-        </div>
-
-        <Card>
-          <Tabs defaultValue="basic" onValueChange={(value) => setActiveTab(value as any)}>
-            <div className="border-b border-border bg-muted/10">
-              <TabsList className="h-auto p-1 bg-transparent w-full justify-start rounded-none border-0">
-                <TabsTrigger 
-                  value="basic"
-                  className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none border-b-2 border-transparent"
-                >
-                  Basic
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="parameters"
-                  className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none border-b-2 border-transparent"
-                >
-                  Parameters
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="states"
-                  className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none border-b-2 border-transparent"
-                >
-                  State Transitions
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="instructions"
-                  className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none border-b-2 border-transparent"
-                >
-                  Instructions
-                </TabsTrigger>
-              </TabsList>
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      <div className="flex-1">
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold mb-4 text-white">
+              NPC Builder
+            </h1>
+            <div className="flex gap-4">
+              <Button onClick={exportJSON} className="flex items-center gap-2">
+                <Download size={16} />
+                Export JSON
+              </Button>
+              <Button variant="secondary" className="flex items-center gap-2" asChild>
+                <label>
+                  <Copy size={16} />
+                  Import JSON
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={importJSON}
+                    className="hidden"
+                  />
+                </label>
+              </Button>
             </div>
+          </div>
+
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div className="xl:col-span-1">
+              <Card>
+                <Tabs defaultValue="basic" onValueChange={(value) => setActiveTab(value as any)}>
+                  <div className="border-b border-border bg-muted/10">
+                    <TabsList className="h-auto p-1 bg-transparent w-full justify-start rounded-none border-0">
+                      <TabsTrigger 
+                        value="basic"
+                        className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none border-b-2 border-transparent"
+                      >
+                        Basic
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="parameters"
+                        className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none border-b-2 border-transparent"
+                      >
+                        Parameters
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="states"
+                        className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none border-b-2 border-transparent"
+                      >
+                        State Transitions
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="instructions"
+                        className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none border-b-2 border-transparent"
+                      >
+                        Instructions
+                      </TabsTrigger>
+                    </TabsList>
+                  </div>
 
             <TabsContent value="basic" className="mt-6">
               <CardContent className="space-y-6">
@@ -733,7 +734,6 @@ export default function NPCBuilder() {
                                 debouncedRenameParameter(key, newValue);
                               }}
                               onBlur={(e) => {
-                                // Apply the rename immediately on blur if there's a pending change
                                 if (parameterRenameTimeouts[key]) {
                                   clearTimeout(parameterRenameTimeouts[key]);
                                   setParameterRenameTimeouts(prev => {
@@ -1027,7 +1027,6 @@ export default function NPCBuilder() {
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-6">
-                          {/* Sensor Configuration */}
                           <div className="space-y-4">
                             <div className="flex items-center">
                               <Label className="text-base font-semibold">Sensor</Label>
@@ -1099,7 +1098,6 @@ export default function NPCBuilder() {
                             </div>
                           </div>
 
-                          {/* Instruction Properties */}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="flex items-center space-x-2">
                               <Checkbox
@@ -1130,7 +1128,6 @@ export default function NPCBuilder() {
                             </div>
                           </div>
 
-                          {/* Reference */}
                           <div className="space-y-2">
                             <div className="flex items-center">
                               <Label>Reference (optional)</Label>
@@ -1145,7 +1142,6 @@ export default function NPCBuilder() {
                             />
                           </div>
 
-                          {/* Actions */}
                           <div className="space-y-4">
                             <div className="flex justify-between items-center">
                               <div className="flex items-center">
@@ -1320,8 +1316,10 @@ export default function NPCBuilder() {
             </TabsContent>
           </Tabs>
         </Card>
+      </div>
 
-        <Card className="mt-8">
+      <div className="xl:col-span-1">
+        <Card className="sticky top-4">
           <CardHeader>
             <CardTitle>JSON Preview</CardTitle>
           </CardHeader>
@@ -1329,13 +1327,30 @@ export default function NPCBuilder() {
             <SyntaxHighlighter
               language="json"
               style={vscDarkPlus}
-              customStyle={{ borderRadius: '0.5rem', maxHeight: '24rem', margin: 0, fontSize: '0.875rem' }}
+              customStyle={{ 
+                borderRadius: '0.5rem', 
+                maxHeight: 'calc(100vh - 12rem)', 
+                margin: 0, 
+                fontSize: '0.75rem',
+                overflow: 'auto'
+              }}
             >
               {JSON.stringify(npc, null, 2)}
             </SyntaxHighlighter>
           </CardContent>
         </Card>
       </div>
+    </div>
+  </div>
+</div>
+
+      <footer className="border-t border-border bg-muted/5 py-4 mt-8">
+        <div className="container mx-auto px-4">
+          <p className="text-center text-sm text-muted-foreground">
+            Copyright 2026 © HytaleModding
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

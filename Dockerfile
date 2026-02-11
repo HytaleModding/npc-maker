@@ -4,8 +4,6 @@ WORKDIR /app
 FROM base AS deps
 RUN apk add --no-cache python3 make g++ git
 COPY bun.lock package.json ./
-COPY source.config.ts tsconfig.json ./
-RUN mkdir -p content/docs
 RUN bun install --frozen-lockfile
 
 FROM base AS builder

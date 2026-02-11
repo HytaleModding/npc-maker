@@ -11,6 +11,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { toast } from "sonner";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const HelpTooltip = ({ children }: { children: React.ReactNode }) => (
   <Tooltip>
@@ -22,8 +25,6 @@ const HelpTooltip = ({ children }: { children: React.ReactNode }) => (
     </TooltipContent>
   </Tooltip>
 );
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface Parameter {
   Value: any;
@@ -515,6 +516,15 @@ export default function NPCBuilder() {
     }
   };
 
+  const copyJSONToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(npc, null, 2));
+      toast.success('JSON copied to clipboard!');
+    } catch (err) {
+      toast.error('Failed to copy JSON to clipboard');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       <div className="flex-1">
@@ -539,6 +549,14 @@ export default function NPCBuilder() {
                     className="hidden"
                   />
                 </label>
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={copyJSONToClipboard}
+                className="flex items-center gap-2"
+              >
+                <Copy size={16} />
+                Copy JSON
               </Button>
             </div>
           </div>

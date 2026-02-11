@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Download, Plus, Trash2, Copy } from 'lucide-react';
+import { Download, Plus, Trash2, Copy, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +10,18 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+
+const HelpTooltip = ({ children }: { children: React.ReactNode }) => (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground cursor-help ml-1" />
+    </TooltipTrigger>
+    <TooltipContent className="max-w-xs">
+      <p>{children}</p>
+    </TooltipContent>
+  </Tooltip>
+);
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -527,7 +539,12 @@ export default function NPCBuilder() {
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="npc-type">NPC Type</Label>
+                    <div className="flex items-center">
+                      <Label htmlFor="npc-type">NPC Type</Label>
+                      <HelpTooltip>
+                        Abstract: Template that other NPCs inherit from. Variant: NPC that extends an Abstract template. Simple: Standalone NPC definition.
+                      </HelpTooltip>
+                    </div>
                     <Select value={npc.Type} onValueChange={(value) => updateNPC('Type', value as any)}>
                       <SelectTrigger>
                         <SelectValue />
@@ -541,7 +558,12 @@ export default function NPCBuilder() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="npc-reference">Reference (for Variant type)</Label>
+                    <div className="flex items-center">
+                      <Label htmlFor="npc-reference">Reference (for Variant type)</Label>
+                      <HelpTooltip>
+                        When Type is "Variant", specify which Abstract template this NPC extends. Example: "Template_Base_NPC"
+                      </HelpTooltip>
+                    </div>
                     <Input
                       id="npc-reference"
                       value={npc.Reference || ''}
@@ -551,7 +573,12 @@ export default function NPCBuilder() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="npc-start-state">Start State</Label>
+                    <div className="flex items-center">
+                      <Label htmlFor="npc-start-state">Start State</Label>
+                      <HelpTooltip>
+                        The initial state the NPC will be in when spawned. Common states include "Idle", "Sleep", or "Patrol". This must match a state defined in your Instructions.
+                      </HelpTooltip>
+                    </div>
                     <Input
                       id="npc-start-state"
                       value={npc.StartState || ''}
@@ -561,7 +588,12 @@ export default function NPCBuilder() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="npc-player-attitude">Default Player Attitude</Label>
+                    <div className="flex items-center">
+                      <Label htmlFor="npc-player-attitude">Default Player Attitude</Label>
+                      <HelpTooltip>
+                        How this NPC initially reacts to players. Hostile: Attacks on sight. Friendly: Helpful interactions. Neutral: Indifferent unless provoked. Ignore: Completely ignores players.
+                      </HelpTooltip>
+                    </div>
                     <Select value={npc.DefaultPlayerAttitude} onValueChange={(value) => updateNPC('DefaultPlayerAttitude', value as any)}>
                       <SelectTrigger>
                         <SelectValue />
@@ -576,7 +608,12 @@ export default function NPCBuilder() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="npc-npc-attitude">Default NPC Attitude</Label>
+                    <div className="flex items-center">
+                      <Label htmlFor="npc-npc-attitude">Default NPC Attitude</Label>
+                      <HelpTooltip>
+                        How this NPC reacts to other NPCs by default. This can be overridden by faction relationships and specific NPC interactions.
+                      </HelpTooltip>
+                    </div>
                     <Select value={npc.DefaultNPCAttitude} onValueChange={(value) => updateNPC('DefaultNPCAttitude', value as any)}>
                       <SelectTrigger>
                         <SelectValue />
@@ -591,7 +628,12 @@ export default function NPCBuilder() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="npc-knockback">Knockback Scale</Label>
+                    <div className="flex items-center">
+                      <Label htmlFor="npc-knockback">Knockback Scale</Label>
+                      <HelpTooltip>
+                        Multiplier for how much this NPC gets knocked back when hit. 0.5 = half knockback, 1.0 = normal knockback, 2.0 = double knockback.
+                      </HelpTooltip>
+                    </div>
                     <Input
                       id="npc-knockback"
                       type="number"
@@ -602,7 +644,12 @@ export default function NPCBuilder() {
                   </div>
 
                   <div className="md:col-span-2 space-y-2">
-                    <Label htmlFor="npc-comment">Comment</Label>
+                    <div className="flex items-center">
+                      <Label htmlFor="npc-comment">Comment</Label>
+                      <HelpTooltip>
+                        Optional comment for developers. Commonly used for debug information or notes about the NPC's purpose. Example: "Debug: DisplayState"
+                      </HelpTooltip>
+                    </div>
                     <Input
                       id="npc-comment"
                       value={npc.$Comment || ''}
@@ -617,7 +664,12 @@ export default function NPCBuilder() {
             <TabsContent value="parameters" className="mt-6">
               <CardContent>
                 <div className="flex justify-between items-center mb-6">
-                  <CardTitle>Parameters</CardTitle>
+                  <div className="flex items-center">
+                    <CardTitle>Parameters</CardTitle>
+                    <HelpTooltip>
+                      Parameters define computed values for your NPC. Use "Compute" to reference game systems (e.g., Appearance, DropList, MaxHealth) or set custom values. Common compute types: Appearance (visual model), DropList (loot table), MaxHealth (health points), NameTranslationKey (display name).
+                    </HelpTooltip>
+                  </div>
                   <Button onClick={addParameter} className="flex items-center gap-2">
                     <Plus size={16} />
                     Add Parameter
@@ -628,7 +680,12 @@ export default function NPCBuilder() {
                   {Object.entries(npc.Parameters).map(([key, param]) => (
                     <Card key={key}>
                       <CardHeader className="flex flex-row items-center justify-between pb-4">
-                        <CardTitle className="text-base">{key}</CardTitle>
+                        <div className="flex items-center">
+                          <CardTitle className="text-base">{key}</CardTitle>
+                          <HelpTooltip>
+                            Parameter name. Common examples: Appearance (visual model), DropList (items dropped on death), MaxHealth (health points), Speed (movement speed), Damage (attack damage).
+                          </HelpTooltip>
+                        </div>
                         <Button
                           variant="destructive"
                           size="sm"
@@ -640,7 +697,12 @@ export default function NPCBuilder() {
                       <CardContent>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label>Value</Label>
+                            <div className="flex items-center">
+                              <Label>Value</Label>
+                              <HelpTooltip>
+                                Parameter value. For compute parameters, use JSON like {`{"Compute": "MaxHealth"}`}. For direct values, enter the literal value (text, number, boolean).
+                              </HelpTooltip>
+                            </div>
                             <Textarea
                               value={typeof param.Value === 'object' ? JSON.stringify(param.Value, null, 2) : String(param.Value)}
                               onChange={(e) => {
@@ -655,7 +717,12 @@ export default function NPCBuilder() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label>Description</Label>
+                            <div className="flex items-center">
+                              <Label>Description</Label>
+                              <HelpTooltip>
+                                Optional description explaining what this parameter does and how it's used by your NPC.
+                              </HelpTooltip>
+                            </div>
                             <Textarea
                               value={param.Description}
                               onChange={(e) => updateParameter(key, 'Description', e.target.value)}
@@ -673,7 +740,12 @@ export default function NPCBuilder() {
             <TabsContent value="states" className="mt-6">
               <CardContent>
                 <div className="flex justify-between items-center mb-6">
-                  <CardTitle>State Transitions</CardTitle>
+                  <div className="flex items-center">
+                    <CardTitle>State Transitions</CardTitle>
+                    <HelpTooltip>
+                      State transitions define when your NPC changes from one behavior state to another. Each transition has conditions (from/to states) and actions that execute during the transition.
+                    </HelpTooltip>
+                  </div>
                   <Button onClick={addStateTransition} className="flex items-center gap-2">
                     <Plus size={16} />
                     Add State Transition
@@ -684,7 +756,12 @@ export default function NPCBuilder() {
                   {(npc.StateTransitions || []).map((transition, index) => (
                     <Card key={index}>
                       <CardHeader className="flex flex-row items-center justify-between pb-4">
-                        <CardTitle className="text-base">Transition {index + 1}</CardTitle>
+                        <div className="flex items-center">
+                          <CardTitle className="text-base">Transition {index + 1}</CardTitle>
+                          <HelpTooltip>
+                            State transition #{index + 1}. Defines when the NPC changes behavior states and what actions to perform during the transition.
+                          </HelpTooltip>
+                        </div>
                         <Button
                           variant="destructive"
                           size="sm"
@@ -697,7 +774,12 @@ export default function NPCBuilder() {
                         <div className="space-y-6">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                              <Label>From States (comma separated)</Label>
+                              <div className="flex items-center">
+                                <Label>From States (comma separated)</Label>
+                                <HelpTooltip>
+                                  States that can trigger this transition. Examples: "Idle, Patrol" means the transition can activate from either Idle or Patrol states.
+                                </HelpTooltip>
+                              </div>
                               <Input
                                 value={transition.States[0]?.From.join(', ') || ''}
                                 onChange={(e) => updateStateTransition(index, 'fromStates', e.target.value)}
@@ -705,7 +787,12 @@ export default function NPCBuilder() {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label>To States (comma separated)</Label>
+                              <div className="flex items-center">
+                                <Label>To States (comma separated)</Label>
+                                <HelpTooltip>
+                                  Destination states this transition can lead to. The NPC will choose one of these based on conditions and weights.
+                                </HelpTooltip>
+                              </div>
                               <Input
                                 value={transition.States[0]?.To.join(', ') || ''}
                                 onChange={(e) => updateStateTransition(index, 'toStates', e.target.value)}
@@ -716,7 +803,12 @@ export default function NPCBuilder() {
 
                           <div className="space-y-4">
                             <div className="flex justify-between items-center">
-                              <Label className="text-base font-semibold">Actions</Label>
+                              <div className="flex items-center">
+                                <Label className="text-base font-semibold">Actions</Label>
+                                <HelpTooltip>
+                                  Actions that execute when this state transition occurs. Can include animations, sounds, spawning items, or changing NPC properties.
+                                </HelpTooltip>
+                              </div>
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -840,7 +932,12 @@ export default function NPCBuilder() {
             <TabsContent value="instructions" className="mt-6">
               <CardContent>
                 <div className="flex justify-between items-center mb-6">
-                  <CardTitle>Instructions</CardTitle>
+                  <div className="flex items-center">
+                    <CardTitle>Instructions</CardTitle>
+                    <HelpTooltip>
+                      Instructions define how your NPC responds to different conditions. Each instruction has a sensor (what to detect) and actions (what to do). Instructions form the core behavior logic of your NPC.
+                    </HelpTooltip>
+                  </div>
                   <Button onClick={addInstruction} className="flex items-center gap-2">
                     <Plus size={16} />
                     Add Instruction
@@ -851,7 +948,12 @@ export default function NPCBuilder() {
                   {(npc.Instructions || []).map((instruction, index) => (
                     <Card key={index}>
                       <CardHeader className="flex flex-row items-center justify-between pb-4">
-                        <CardTitle className="text-base">Instruction {index + 1}</CardTitle>
+                        <div className="flex items-center">
+                          <CardTitle className="text-base">Instruction {index + 1}</CardTitle>
+                          <HelpTooltip>
+                            Instruction #{index + 1}. Defines a condition to watch for (sensor) and what actions to take when that condition is met.
+                          </HelpTooltip>
+                        </div>
                         <Button
                           variant="destructive"
                           size="sm"
@@ -864,10 +966,20 @@ export default function NPCBuilder() {
                         <div className="space-y-6">
                           {/* Sensor Configuration */}
                           <div className="space-y-4">
-                            <Label className="text-base font-semibold">Sensor</Label>
+                            <div className="flex items-center">
+                              <Label className="text-base font-semibold">Sensor</Label>
+                              <HelpTooltip>
+                                Sensors detect conditions that trigger this instruction. State: Detects current NPC state. Target: Detects players/entities. Damage: Detects when NPC takes damage. Beacon: Listens for messages from other NPCs.
+                              </HelpTooltip>
+                            </div>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                               <div className="space-y-2">
-                                <Label>Sensor Type</Label>
+                                <div className="flex items-center">
+                                  <Label>Sensor Type</Label>
+                                  <HelpTooltip>
+                                    State: When NPC is in specific state. Target: When players/NPCs are nearby. Damage: When taking damage. Beacon: When receiving messages. And/Or: Combine multiple sensors.
+                                  </HelpTooltip>
+                                </div>
                                 <Select 
                                   value={instruction.Sensor?.Type || ''} 
                                   onValueChange={(value) => updateInstruction(index, 'sensorType', value)}
@@ -890,7 +1002,12 @@ export default function NPCBuilder() {
 
                               {instruction.Sensor?.Type === 'State' && (
                                 <div className="space-y-2">
-                                  <Label>State</Label>
+                                  <div className="flex items-center">
+                                    <Label>State</Label>
+                                    <HelpTooltip>
+                                      The state name to watch for. Examples: "Idle", "Sleep", "Combat". Use dot notation for substates like ".Guard" or ".FindFood".
+                                    </HelpTooltip>
+                                  </div>
                                   <Input
                                     value={(instruction.Sensor as any)?.State || ''}
                                     onChange={(e) => updateInstruction(index, 'sensorState', e.target.value)}
@@ -901,7 +1018,12 @@ export default function NPCBuilder() {
 
                               {(instruction.Sensor?.Type === 'Target' || instruction.Sensor?.Type === 'Mob') && (
                                 <div className="space-y-2">
-                                  <Label>Range</Label>
+                                  <div className="flex items-center">
+                                    <Label>Range</Label>
+                                    <HelpTooltip>
+                                      Detection range in game units. Larger values = detects from further away. Typical values: 3-5 for close detection, 10-20 for medium range, 30+ for long range.
+                                    </HelpTooltip>
+                                  </div>
                                   <Input
                                     type="number"
                                     step="0.1"
@@ -922,7 +1044,12 @@ export default function NPCBuilder() {
                                 checked={instruction.Continue || false}
                                 onCheckedChange={(checked) => updateInstruction(index, 'Continue', checked)}
                               />
-                              <Label htmlFor={`continue-${index}`}>Continue</Label>
+                              <div className="flex items-center">
+                                <Label htmlFor={`continue-${index}`}>Continue</Label>
+                                <HelpTooltip>
+                                  If checked, the NPC will continue processing other instructions after this one executes. If unchecked, instruction processing stops here.
+                                </HelpTooltip>
+                              </div>
                             </div>
                             
                             <div className="flex items-center space-x-2">
@@ -931,13 +1058,23 @@ export default function NPCBuilder() {
                                 checked={instruction.ActionsBlocking || false}
                                 onCheckedChange={(checked) => updateInstruction(index, 'ActionsBlocking', checked)}
                               />
-                              <Label htmlFor={`blocking-${index}`}>Actions Blocking</Label>
+                              <div className="flex items-center">
+                                <Label htmlFor={`blocking-${index}`}>Actions Blocking</Label>
+                                <HelpTooltip>
+                                  If checked, these actions will block (prevent) other instructions from running while they execute. Useful for ensuring animations or sequences complete.
+                                </HelpTooltip>
+                              </div>
                             </div>
                           </div>
 
                           {/* Reference */}
                           <div className="space-y-2">
-                            <Label>Reference (optional)</Label>
+                            <div className="flex items-center">
+                              <Label>Reference (optional)</Label>
+                              <HelpTooltip>
+                                Reference to a reusable instruction component. Allows sharing common instruction logic between multiple NPCs. Example: "Component_Instruction_Standard_Detection"
+                              </HelpTooltip>
+                            </div>
                             <Input
                               value={instruction.Reference || ''}
                               onChange={(e) => updateInstruction(index, 'Reference', e.target.value)}
@@ -948,7 +1085,12 @@ export default function NPCBuilder() {
                           {/* Actions */}
                           <div className="space-y-4">
                             <div className="flex justify-between items-center">
-                              <Label className="text-base font-semibold">Actions</Label>
+                              <div className="flex items-center">
+                                <Label className="text-base font-semibold">Actions</Label>
+                                <HelpTooltip>
+                                  Actions executed when this instruction's sensor triggers. Can include state changes, animations, attacks, timeouts, and more. Actions execute in sequence.
+                                </HelpTooltip>
+                              </div>
                               <Button
                                 variant="outline"
                                 size="sm"

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Download, Plus, Trash2, Copy, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -233,6 +233,8 @@ const defaultNPC: NPCData = {
 export default function NPCBuilder() {
   const [npc, setNPC] = useState<NPCData>(defaultNPC);
   const [activeTab, setActiveTab] = useState<'basic' | 'parameters' | 'states' | 'instructions'>('basic');
+  const [parameterRenameTimeouts, setParameterRenameTimeouts] = useState<Record<string, NodeJS.Timeout>>({});
+  const [parameterInputValues, setParameterInputValues] = useState<Record<string, string>>({});
 
   const updateNPC = (field: keyof NPCData, value: any) => {
     setNPC(prev => ({ ...prev, [field]: value }));
@@ -272,6 +274,44 @@ export default function NPCBuilder() {
       return { ...prev, Parameters: newParams };
     });
   };
+
+  const renameParameter = (oldKey: string, newKey: string) => {
+    if (oldKey === newKey || !newKey.trim()) return;
+    
+    setNPC(prev => {
+      const newParams = { ...prev.Parameters };
+      const parameterData = newParams[oldKey];
+      
+      if (!newParams[newKey]) {
+        newParams[newKey] = parameterData;
+        delete newParams[oldKey];
+      }
+      
+      return { ...prev, Parameters: newParams };
+    });
+  };
+
+  const debouncedRenameParameter = useCallback((oldKey: string, newKey: string) => {
+    // Clear existing timeout for this parameter
+    if (parameterRenameTimeouts[oldKey]) {
+      clearTimeout(parameterRenameTimeouts[oldKey]);
+    }
+
+    // Set new timeout
+    const timeoutId = setTimeout(() => {
+      renameParameter(oldKey, newKey);
+      setParameterRenameTimeouts(prev => {
+        const newTimeouts = { ...prev };
+        delete newTimeouts[oldKey];
+        return newTimeouts;
+      });
+    }, 500); // 500ms delay
+
+    setParameterRenameTimeouts(prev => ({
+      ...prev,
+      [oldKey]: timeoutId
+    }));
+  }, [parameterRenameTimeouts]);
 
   const addStateTransition = () => {
     const newTransition: StateTransition = {
@@ -680,11 +720,34 @@ export default function NPCBuilder() {
                   {Object.entries(npc.Parameters).map(([key, param]) => (
                     <Card key={key}>
                       <CardHeader className="flex flex-row items-center justify-between pb-4">
-                        <div className="flex items-center">
-                          <CardTitle className="text-base">{key}</CardTitle>
-                          <HelpTooltip>
-                            Parameter name. Common examples: Appearance (visual model), DropList (items dropped on death), MaxHealth (health points), Speed (movement speed), Damage (attack damage).
-                          </HelpTooltip>
+                        <div className="flex items-center space-x-2 flex-1">
+                          <div className="space-y-2 flex-1 max-w-xs">
+                            <div className="flex items-center">
+                              <Label className="text-sm">Parameter Name</Label>
+                            </div>
+                            <Input
+                              value={parameterInputValues[key] !== undefined ? parameterInputValues[key] : key}
+                              onChange={(e) => {
+                                const newValue = e.target.value;
+                                setParameterInputValues(prev => ({ ...prev, [key]: newValue }));
+                                debouncedRenameParameter(key, newValue);
+                              }}
+                              onBlur={(e) => {
+                                // Apply the rename immediately on blur if there's a pending change
+                                if (parameterRenameTimeouts[key]) {
+                                  clearTimeout(parameterRenameTimeouts[key]);
+                                  setParameterRenameTimeouts(prev => {
+                                    const newTimeouts = { ...prev };
+                                    delete newTimeouts[key];
+                                    return newTimeouts;
+                                  });
+                                  renameParameter(key, e.target.value);
+                                }
+                              }}
+                              placeholder="ParameterName"
+                              className="font-medium"
+                            />
+                          </div>
                         </div>
                         <Button
                           variant="destructive"

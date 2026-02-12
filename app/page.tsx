@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Navbar } from '@/components/navbar';
 import { toast } from "sonner";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -531,7 +532,8 @@ export default function NPCBuilder() {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
-      <div className="flex-1">
+      <Navbar />
+      <div className="flex-1 pt-14">
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
             <h1 className="text-4xl font-bold mb-4 text-white">

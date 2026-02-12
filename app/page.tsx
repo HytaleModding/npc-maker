@@ -906,7 +906,7 @@ export default function NPCBuilder() {
                               </Button>
                             </div>
                             
-                            {transition.Actions.map((action, actionIndex) => (
+                            {(Array.isArray(transition.Actions) ? transition.Actions : []).map((action, actionIndex) => (
                               <Card key={actionIndex} className="bg-muted/20">
                                 <CardContent className="pt-4">
                                   <div className="flex justify-between items-center mb-4">
